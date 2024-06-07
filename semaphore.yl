@@ -1,0 +1,30 @@
+version: v1.0
+name: Deploy Serverless Application
+
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+
+blocks:
+  - name: Install Dependencies
+    task:
+      jobs:
+        - name: Install AWS CLI
+          commands:
+            - checkout
+            - sudo apt-get update
+            - sudo apt-get install -y python3-pip
+            - pip3 install awscli
+            - pip3 install boto3
+
+  - name: Deploy to AWS
+    task:
+      secrets:
+        - name: aws_credentials
+      jobs:
+        - name: Deploy Lambda Function
+          commands:
+            - checkout
+            - chmod +x deploy.sh
+            - ./deploy.sh
